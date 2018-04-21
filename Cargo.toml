@@ -1,0 +1,12 @@
+[package]
+name = "receiver-cbor"
+version = "0.2.0"
+authors = ["William Stevens <contact@wastevensv.com>"]
+
+[dependencies]
+cobs = "0.1.3"
+serial = "0.4.0"
+serde = "1.0.37"
+serde_cbor = "0.8.2"
+serde_derive = "1.0.39"
+serde_json = "1.0.15"
