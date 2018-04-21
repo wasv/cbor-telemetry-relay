@@ -8,6 +8,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use proxy_error::ProxyError::{self, ParseError};
 
 #[derive(Serialize, Debug)]
+/// A struct that represents a frame to be sent over the network.
 pub struct Frame {
     timestamp: u64,
     sender: String,
@@ -16,6 +17,7 @@ pub struct Frame {
 }
 
 #[derive(Serialize, Debug)]
+/// A sturct for storing the name, and data type associated with a data value.
 pub struct Stream {
     name: String,
     value: Data,
@@ -23,6 +25,7 @@ pub struct Stream {
 }
 
 #[derive(Debug)]
+/// An enum for storing the different types of data possible in Streams.
 pub enum Data {
     Float(f64),
     Signed(i64),
@@ -30,6 +33,8 @@ pub enum Data {
 }
 
 impl Serialize for Data {
+/// A custom serializer implementation. Removes Data from containing struct.
+/// Also accounts for isssue where 'type' is a reserved word in rust.
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -43,6 +48,7 @@ impl Serialize for Data {
 }
 
 impl Frame {
+    /// Creates a new Frame from a serde_cbor::Value object or returns a ParseError.
     pub fn from_value(val: serde_cbor::Value) -> Result<Self, ProxyError> {
         let map = try!(val.as_object().ok_or(ParseError("Not a map.".to_string())));
         let mut map = map.clone();

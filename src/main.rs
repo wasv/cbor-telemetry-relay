@@ -24,6 +24,7 @@ use input::Input;
 mod proxy_error;
 use proxy_error::ProxyError;
 
+/// Opens input stream, reads Frames from stream in loop and prints them.
 fn main() {
     let args: Vec<String> = env::args().collect();
     let argc = args.len();
@@ -54,6 +55,7 @@ fn main() {
 }
 
 fn read_buffer(reader: &mut Input) -> Result<Value, ProxyError> {
+/// Reads and unpacks a single frame from the buffer.
     let mut buf: Vec<u8> = Vec::new();
     let num_bytes = reader.source.read_until(0, &mut buf)?;
     if num_bytes == 0 {

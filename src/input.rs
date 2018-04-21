@@ -8,6 +8,7 @@ use std::fs::File;
 
 use input::serial::prelude::*;
 
+/// Serial Port settings. Defaults are fine, sinc$e BluePill autonegottaiates.
 const SETTINGS: serial::PortSettings = serial::PortSettings {
     baud_rate: serial::Baud9600,
     char_size: serial::Bits8,
@@ -20,6 +21,7 @@ pub struct Input<'a> {
     pub source: Box<BufRead + 'a>,
 }
 
+/// Possible methods for creating an Input stream from various sources.
 impl<'a> Input<'a> {
     pub fn console(stdin: &'a io::Stdin) -> Input<'a> {
         Input {

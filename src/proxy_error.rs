@@ -6,13 +6,21 @@ use std::fmt;
 use std::error::Error;
 
 #[derive(Debug)]
+/// Type containing all possible errors from the proxy.
 pub enum ProxyError {
+    /// Thown when error encountered with serial port.
     IoError(io::Error),
-    UnpackError(serde_cbor::error::Error),
+    /// Thrown when error occurs while decoding COBS buffer.
     DecodeError,
+    /// Thrown when error occurs while deserializing buffer to a CBOR value.
+    UnpackError(serde_cbor::error::Error),
+    /// Errors without a known category or cause.
     InternalError,
+    /// Thrown when error occurs while parsing CBOR value to Frame.
     ParseError(String),
+    /// Thrown when data read from serial port timesout.
     TimedOut,
+    /// Thrown when serial device disconnects from computer.
     Disconnect,
 }
 
@@ -33,8 +41,7 @@ impl Error for ProxyError {
         match *self {
             ProxyError::IoError(ref err) => Some(err),
             ProxyError::UnpackError(ref err) => Some(err),
-            // Our custom error doesn't have an underlying cause,
-            // but we could modify it so that it does.
+            // Our custom error doesn't have an underlying cause.
             ProxyError::ParseError(_) => None,
             ProxyError::DecodeError => None,
             ProxyError::InternalError => None,
@@ -58,6 +65,8 @@ impl fmt::Display for ProxyError {
     }
 }
 
+/// Convert from io::Errors to ProxyErrors.
+/// Changes io Timeouts to ProxyError::TimedOuts and EOFs to Disconnects.
 impl From<io::Error> for ProxyError {
     fn from(err: io::Error) -> ProxyError {
         match err.kind() {
