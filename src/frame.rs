@@ -1,7 +1,7 @@
 extern crate serde;
 extern crate serde_cbor;
 
-use serde::ser::{Serialize, Serializer};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 use serde_cbor::{ObjectKey, Value};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -16,7 +16,7 @@ pub struct Frame {
     streams: Vec<Stream>,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 /// A sturct for storing the name, and data type associated with a data value.
 pub struct Stream {
     name: String,
@@ -32,18 +32,22 @@ pub enum Data {
     Unsigned(u64),
 }
 
-impl Serialize for Data {
 /// A custom serializer implementation. Removes Data from containing struct.
 /// Also accounts for isssue where 'type' is a reserved word in rust.
+impl Serialize for Stream {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        match self {
-            &Data::Signed(data) => serializer.serialize_i64(data),
-            &Data::Unsigned(data) => serializer.serialize_u64(data),
-            &Data::Float(data) => serializer.serialize_f64(data),
-        }
+        let mut state = serializer.serialize_struct("Stream", 3)?;
+        state.serialize_field("name", &self.name)?;
+        match self.value {
+            Data::Signed(ref data) => state.serialize_field("value", data)?,
+            Data::Unsigned(ref data) => state.serialize_field("value", data)?,
+            Data::Float(ref data) => state.serialize_field("value", data)?,
+        };
+        state.serialize_field("type", &self.dtype)?;
+        state.end()
     }
 }
 
