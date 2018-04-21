@@ -38,12 +38,9 @@ fn main() {
     eprintln!("Comms up.");
     loop {
         match read_buffer(&mut reader) {
-            Ok(val) => match Frame::from_value(val) {
-                Ok(frame) => {
-                    println!("{}", serde_json::to_string(&frame).unwrap());
-                }
-                Err(e) => eprintln!("Parse Error: {}", e),
-            },
+            Ok(frame) => {
+                println!("{}", serde_json::to_string(&frame).unwrap());
+            }
             Err(ProxyError::Disconnect) => {
                 eprintln!("Device Disconnected.");
                 process::exit(1);
@@ -54,8 +51,8 @@ fn main() {
     }
 }
 
-fn read_buffer(reader: &mut Input) -> Result<Value, ProxyError> {
 /// Reads and unpacks a single frame from the buffer.
+fn read_buffer(reader: &mut Input) -> Result<Frame, ProxyError> {
     let mut buf: Vec<u8> = Vec::new();
     let num_bytes = reader.source.read_until(0, &mut buf)?;
     if num_bytes == 0 {
@@ -64,5 +61,5 @@ fn read_buffer(reader: &mut Input) -> Result<Value, ProxyError> {
     let buf = &buf[0..num_bytes - 1];
     let buf = try!(decode_vec(&buf).map_err(|()| ProxyError::DecodeError));
     let val = try!(from_slice(&buf));
-    Ok(val)
+    Frame::from_value(val)
 }
