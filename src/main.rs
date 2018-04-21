@@ -11,9 +11,9 @@ use std::process;
 use std::env;
 use std::string::String;
 
-use cobs::{decode_vec, encode_vec};
+use cobs::decode_vec;
 
-use serde_cbor::{from_slice, Value};
+use serde_cbor::from_slice;
 
 mod frame;
 use frame::Frame;
