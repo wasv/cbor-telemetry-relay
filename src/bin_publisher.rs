@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 extern crate cobs;
 extern crate serde_cbor;
 
@@ -13,7 +14,7 @@ use cobs::encode_vec;
 fn main() {
     let delay = time::Duration::from_millis(1500);
     let start = time::Instant::now();
-    for x in 0..10 {
+    for x in 0.. {
         let mut frame: BTreeMap<ObjectKey, Value> = BTreeMap::new();
         frame.insert(ObjectKey::String("fnum".to_string()), Value::U64(x));
         frame.insert(
@@ -25,7 +26,7 @@ fn main() {
         let ts = (now.as_secs() * 1e9 as u64) + (now.subsec_nanos() as u64);
         frame.insert(ObjectKey::String("dt".to_string()), Value::U64(ts));
 
-        frame.insert(ObjectKey::String("ax".to_string()), Value::U64(x * x * x));
+        frame.insert(ObjectKey::String("ax".to_string()), Value::U64(2 * x));
         frame.insert(ObjectKey::String("ay".to_string()), Value::U64(x * x));
         frame.insert(ObjectKey::String("az".to_string()), Value::U64(x + x));
         frame.insert(ObjectKey::String("temp".to_string()), Value::F64(3.14159));

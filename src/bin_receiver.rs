@@ -39,6 +39,7 @@ fn main() {
     loop {
         match read_buffer(&mut reader) {
             Ok(frame) => {
+                eprintln!("{:?}", frame);
                 println!("{}", serde_json::to_string(&frame).unwrap());
             }
             Err(ProxyError::Disconnect) => {
