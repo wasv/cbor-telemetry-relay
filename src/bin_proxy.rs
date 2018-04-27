@@ -10,7 +10,7 @@ use std::io::Write;
 fn main() {
     eprintln!("Net up.");
 
-    let listener = TcpListener::bind("127.0.0.1:5000").unwrap();
+    let listener = TcpListener::bind("127.0.0.1:7000").unwrap();
 
     let arc_msg: Arc<RwLock<String>> = Arc::new(RwLock::new(String::new()));
     let arc_count: Arc<RwLock<u64>> = Arc::new(RwLock::new(0));
@@ -42,9 +42,12 @@ fn main() {
                         let line = arc_msg.read().unwrap();
                         let count = arc_count.read().unwrap();
                         if pos < *count {
-                            let line = cobs::encode_vec(line.as_bytes());
+                            let mut line = cobs::encode_vec(line.as_bytes());
+                            line.push(0);
                             match stream.write(&line[..]) {
-                                Ok(_) => {}
+                                Ok(_) => {
+                                    stream.flush();
+                                }
                                 Err(e) => {
                                     eprintln!("Socket Error: {}", e);
                                     return;
