@@ -46,7 +46,13 @@ fn main() {
                             line.push(0);
                             match stream.write(&line[..]) {
                                 Ok(_) => {
-                                    stream.flush();
+                                    match stream.flush() {
+                                        Ok(_) => {},
+                                        Err(e) => {
+                                            eprintln!("Socket Error: {}", e);
+                                            return;
+                                        }
+                                    }
                                 }
                                 Err(e) => {
                                     eprintln!("Socket Error: {}", e);
