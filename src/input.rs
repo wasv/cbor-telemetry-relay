@@ -18,7 +18,7 @@ const SETTINGS: serial::PortSettings = serial::PortSettings {
 };
 
 pub struct Input<'a> {
-    pub source: Box<BufRead + 'a>,
+    pub source: Box<dyn BufRead + 'a>,
 }
 
 /// Possible methods for creating an Input stream from various sources.

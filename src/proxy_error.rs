@@ -37,7 +37,7 @@ impl Error for ProxyError {
         }
     }
 
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match *self {
             ProxyError::IoError(ref err) => Some(err),
             ProxyError::UnpackError(ref err) => Some(err),
