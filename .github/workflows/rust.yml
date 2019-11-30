@@ -9,8 +9,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Cache
+      uses: actions/cache@v1.0.3
+      with:
+        path: ~/.cargo
+        key: Linux-cargo-${{ hashFiles('**/Carog.toml') }}
+        restore-keys: Linux-cargo-
     - name: Build
       run: cargo build --verbose
+    - run: rustup component add clippy
+    - uses: actions-rs/clippy-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Run tests
       run: cargo test --verbose
     - name: Github Tag Bump
