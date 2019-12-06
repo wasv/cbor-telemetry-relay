@@ -54,34 +54,30 @@ impl Serialize for Stream {
 impl Frame {
     /// Creates a new Frame from a serde_cbor::Value object or returns a ParseError.
     pub fn from_value(val: serde_cbor::Value) -> Result<Self, ProxyError> {
-        let map = try!(val.as_object().ok_or_else(|| ParseError("Not a map.".to_string())));
+        let map = val
+            .as_object()
+            .ok_or_else(|| ParseError("Not a map.".to_string()))?;
         let mut map = map.clone();
-        let fnum: Value = try!(
-            map.remove(&ObjectKey::String("fnum".to_string()))
-                .ok_or_else(|| ParseError("No framenumber.".to_string()))
-        );
-        let fnum: u64 = try!(
-            fnum.as_u64()
-                .ok_or_else(|| ParseError("Invalid framenumber.".to_string()))
-        );
-        let sender: Value = try!(
-            map.remove(&ObjectKey::String("sender".to_string()))
-                .ok_or_else(|| ParseError("No sender.".to_string()))
-        );
-        let sender: String = try!(
-            sender
-                .as_string()
-                .ok_or_else(|| ParseError("Invalid sender.".to_string()))
-                .map(|x| x.to_string())
-        );
+        let fnum: Value = map
+            .remove(&ObjectKey::String("fnum".to_string()))
+            .ok_or_else(|| ParseError("No framenumber.".to_string()))?;
+        let fnum: u64 = fnum
+            .as_u64()
+            .ok_or_else(|| ParseError("Invalid framenumber.".to_string()))?;
+        let sender: Value = map
+            .remove(&ObjectKey::String("sender".to_string()))
+            .ok_or_else(|| ParseError("No sender.".to_string()))?;
+        let sender: String = sender
+            .as_string()
+            .ok_or_else(|| ParseError("Invalid sender.".to_string()))
+            .map(|x| x.to_string())?;
         let mut streams: Vec<Stream> = vec![];
 
         for (key, value) in map {
-            let key: String = try!(
-                key.as_string()
-                    .map(|x| x.to_string())
-                    .ok_or_else(|| ParseError("Invalid key.".to_string()))
-            );
+            let key: String = key
+                .as_string()
+                .map(|x| x.to_string())
+                .ok_or_else(|| ParseError("Invalid key.".to_string()))?;
             match value {
                 Value::F64(value) => streams.push(Stream {
                     name: key,

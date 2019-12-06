@@ -6,9 +6,9 @@ extern crate serde_cbor;
 extern crate serde_derive;
 extern crate serde_json;
 
+use std::env;
 use std::io::BufRead;
 use std::process;
-use std::env;
 use std::string::String;
 
 use cobs::decode_vec;
@@ -60,7 +60,7 @@ fn read_buffer(reader: &mut Input) -> Result<Frame, ProxyError> {
         return Err(ProxyError::Disconnect);
     }
     let buf = &buf[0..num_bytes - 1];
-    let buf = try!(decode_vec(&buf).map_err(|()| ProxyError::DecodeError));
-    let val = try!(from_slice(&buf));
+    let buf = decode_vec(&buf).map_err(|()| ProxyError::DecodeError)?;
+    let val = from_slice(&buf)?;
     Frame::from_value(val)
 }

@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 extern crate cobs;
 
-use std::net::TcpListener;
-use std::thread;
-use std::sync::{Arc, RwLock};
 use std::clone::Clone;
 use std::io::Write;
+use std::net::TcpListener;
+use std::sync::{Arc, RwLock};
+use std::thread;
 
 fn main() {
     eprintln!("Net up.");
@@ -45,15 +45,13 @@ fn main() {
                             let mut line = cobs::encode_vec(line.as_bytes());
                             line.push(0);
                             match stream.write(&line[..]) {
-                                Ok(_) => {
-                                    match stream.flush() {
-                                        Ok(_) => {},
-                                        Err(e) => {
-                                            eprintln!("Socket Error: {}", e);
-                                            return;
-                                        }
+                                Ok(_) => match stream.flush() {
+                                    Ok(_) => {}
+                                    Err(e) => {
+                                        eprintln!("Socket Error: {}", e);
+                                        return;
                                     }
-                                }
+                                },
                                 Err(e) => {
                                     eprintln!("Socket Error: {}", e);
                                     return;

@@ -1,9 +1,9 @@
 extern crate serde_cbor;
 extern crate serial;
 
-use std::io;
-use std::fmt;
 use std::error::Error;
+use std::fmt;
+use std::io;
 
 #[derive(Debug)]
 /// Type containing all possible errors from the proxy.

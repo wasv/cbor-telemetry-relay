@@ -2,14 +2,14 @@
 extern crate cobs;
 extern crate serde_cbor;
 
-use std::thread;
-use std::time;
-use std::io::Write;
-use std::collections::BTreeMap;
+use cobs::encode_vec;
 use serde_cbor::to_vec;
 use serde_cbor::ObjectKey;
 use serde_cbor::Value;
-use cobs::encode_vec;
+use std::collections::BTreeMap;
+use std::io::Write;
+use std::thread;
+use std::time;
 
 fn main() {
     let delay = time::Duration::from_millis(1500);
@@ -29,7 +29,10 @@ fn main() {
         frame.insert(ObjectKey::String("ax".to_string()), Value::U64(2 * x));
         frame.insert(ObjectKey::String("ay".to_string()), Value::U64(x * x));
         frame.insert(ObjectKey::String("az".to_string()), Value::U64(x + x));
-        frame.insert(ObjectKey::String("temp".to_string()), Value::F64(std::f64::consts::PI));
+        frame.insert(
+            ObjectKey::String("temp".to_string()),
+            Value::F64(std::f64::consts::PI),
+        );
 
         let encoded = to_vec(&frame).unwrap();
         let encoded = encode_vec(&encoded);

@@ -1,10 +1,10 @@
 extern crate serial;
 
-use std::process;
 use std::os::unix::net::UnixStream;
+use std::process;
 
-use std::io::{self, BufRead, BufReader, Read};
 use std::fs::File;
+use std::io::{self, BufRead, BufReader, Read};
 
 use input::serial::prelude::*;
 
