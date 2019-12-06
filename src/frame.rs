@@ -54,24 +54,24 @@ impl Serialize for Stream {
 impl Frame {
     /// Creates a new Frame from a serde_cbor::Value object or returns a ParseError.
     pub fn from_value(val: serde_cbor::Value) -> Result<Self, ProxyError> {
-        let map = try!(val.as_object().ok_or(ParseError("Not a map.".to_string())));
+        let map = try!(val.as_object().ok_or_else(|| ParseError("Not a map.".to_string())));
         let mut map = map.clone();
         let fnum: Value = try!(
             map.remove(&ObjectKey::String("fnum".to_string()))
-                .ok_or(ParseError("No framenumber.".to_string()))
+                .ok_or_else(|| ParseError("No framenumber.".to_string()))
         );
         let fnum: u64 = try!(
             fnum.as_u64()
-                .ok_or(ParseError("Invalid framenumber.".to_string()))
+                .ok_or_else(|| ParseError("Invalid framenumber.".to_string()))
         );
         let sender: Value = try!(
             map.remove(&ObjectKey::String("sender".to_string()))
-                .ok_or(ParseError("No sender.".to_string()))
+                .ok_or_else(|| ParseError("No sender.".to_string()))
         );
         let sender: String = try!(
             sender
                 .as_string()
-                .ok_or(ParseError("Invalid sender.".to_string()))
+                .ok_or_else(|| ParseError("Invalid sender.".to_string()))
                 .map(|x| x.to_string())
         );
         let mut streams: Vec<Stream> = vec![];
@@ -80,7 +80,7 @@ impl Frame {
             let key: String = try!(
                 key.as_string()
                     .map(|x| x.to_string())
-                    .ok_or(ParseError("Invalid key.".to_string()))
+                    .ok_or_else(|| ParseError("Invalid key.".to_string()))
             );
             match value {
                 Value::F64(value) => streams.push(Stream {
@@ -102,7 +102,7 @@ impl Frame {
             };
         }
         let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let timestamp = (now.as_secs() * 1e9 as u64) + (now.subsec_nanos() as u64);
+        let timestamp = now.as_secs() * (1e9 as u64) + u64::from(now.subsec_nanos());
         Ok(Frame {
             timestamp,
             streams,

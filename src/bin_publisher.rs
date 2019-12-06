@@ -23,18 +23,18 @@ fn main() {
         );
 
         let now = start.elapsed();
-        let ts = (now.as_secs() * 1e9 as u64) + (now.subsec_nanos() as u64);
+        let ts = now.as_secs() * (1e9 as u64) + u64::from(now.subsec_nanos());
         frame.insert(ObjectKey::String("dt".to_string()), Value::U64(ts));
 
         frame.insert(ObjectKey::String("ax".to_string()), Value::U64(2 * x));
         frame.insert(ObjectKey::String("ay".to_string()), Value::U64(x * x));
         frame.insert(ObjectKey::String("az".to_string()), Value::U64(x + x));
-        frame.insert(ObjectKey::String("temp".to_string()), Value::F64(3.14159));
+        frame.insert(ObjectKey::String("temp".to_string()), Value::F64(std::f64::consts::PI));
 
         let encoded = to_vec(&frame).unwrap();
         let encoded = encode_vec(&encoded);
-        std::io::stdout().write(&encoded).unwrap();
-        std::io::stdout().write(b"\0").unwrap();
+        std::io::stdout().write_all(&encoded).unwrap();
+        std::io::stdout().write_all(b"\0").unwrap();
         std::io::stdout().flush().unwrap();
         thread::sleep(delay);
     }
